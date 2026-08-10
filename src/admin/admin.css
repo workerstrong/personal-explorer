@@ -156,7 +156,7 @@
   display: grid;
   grid-template: 72px minmax(0, 1fr) / 224px minmax(420px, 540px) minmax(480px, 1fr);
   overflow: hidden;
-  background: #f3f1e9;
+  background: #fffdf7;
   color: #18181b;
   font-family: 'Space Grotesk', system-ui, sans-serif;
 }
@@ -224,7 +224,7 @@
 .admin-sidebar-footer { display: grid; gap: .2rem; margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--admin-border); }
 .admin-sidebar-footer small { padding: .45rem .75rem 0; overflow: hidden; color: var(--admin-muted); font-size: .68rem; text-overflow: ellipsis; }
 
-.admin-editor-pane { grid-column: 2; min-height: 0; overflow-y: auto; padding: clamp(1.25rem, 2.5vw, 2rem); background: #f8f7f2; }
+.admin-editor-pane { grid-column: 2; min-height: 0; overflow-y: auto; padding: clamp(1.25rem, 2.5vw, 2rem); background: #fffdf7; }
 .admin-form-section { min-width: 0; margin: 0; padding: 0; border: 0; }
 .admin-form-section legend { padding: 0; font-family: 'Archivo', sans-serif; font-size: clamp(1.75rem, 3vw, 2.5rem); font-weight: 800; letter-spacing: -.04em; }
 .admin-section-intro { margin: .4rem 0 1.75rem; color: var(--admin-muted); font-size: .86rem; }
@@ -288,7 +288,7 @@
 .admin-backup-panel { margin-top: 2rem; padding: 1rem; border: 1px solid var(--admin-border); border-radius: 1rem; background: #fff; }
 .admin-backup-panel > div { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1rem; }
 
-.admin-preview-pane { grid-column: 3; display: flex; min-width: 0; min-height: 0; flex-direction: column; border-left: 1px solid var(--admin-border); background: #dcdde1; }
+.admin-preview-pane { grid-column: 3; display: flex; min-width: 0; min-height: 0; flex-direction: column; border-left: 1px solid var(--admin-border); background: #f4f4f5; }
 .admin-preview-toolbar { display: flex; min-height: 56px; align-items: center; justify-content: space-between; gap: 1rem; padding: .5rem .9rem; border-bottom: 1px solid #c4c4c8; background: #fffdf7; }
 .admin-preview-toolbar > div:first-child { display: flex; align-items: center; gap: .5rem; font-size: .82rem; }
 .admin-device-switcher { display: flex; padding: .2rem; border: 1px solid var(--admin-border); border-radius: .65rem; background: #f4f4f5; }
