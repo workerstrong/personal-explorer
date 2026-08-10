@@ -21,14 +21,20 @@ pnpm dev
 1. 推荐：打开 `/admin`，在表单中编辑并实时预览。
 2. 直接修改初始资料：[src/data/profile.js](src/data/profile.js)。它仍是首次建站、本地回退和初始化云端草稿的唯一源码数据文件。
 
-第一阶段工作台可编辑：姓名、身份定位、简介、所在地、状态、邮箱、About 两段内容、全部首页卡片的标题与摘要、SEO 标题/描述/分享图链接。
+工作台已经包含第二、第三阶段功能：
 
-项目、技能、社交链接、图片等完整初始内容仍集中在 `src/data/profile.js`；这些数组的可视化增删、排序和图片上传属于下一阶段。
+- 可视化增删、复制和排序 About 段落/事实、教育、项目、技能组、兴趣、图片、社交链接和未来目标。
+- 项目标签和技能项目可在组内继续增删与排序。
+- 图片可上传到 Supabase Storage，也可继续使用外部 URL；水平/垂直焦点决定裁切位置。
+- Bento 页面构建器支持新增、复制、隐藏、删除和拖动排序卡片。
+- 每张卡片可选择标准、宽、高、主角或全宽布局，以及色调、图标、内容来源和弹窗/原位展开交互。
+- 自定义卡片支持独立正文和多个外部链接。
+- 完整内容可以导入/导出 JSON 备份。旧版 schema v1 草稿会自动迁移到 v2。
 
 ## 接入免费的 Supabase 后台
 
 1. 新建一个 Supabase 项目。
-2. 打开 SQL Editor，复制并运行 `supabase/migrations/001_phase_one_cms.sql`。运行前把文件底部的 `you@example.com` 改成你的管理员邮箱。
+2. 打开 SQL Editor，依次运行 `supabase/migrations/001_phase_one_cms.sql` 和 `supabase/migrations/002_profile_media.sql`。运行第一份文件前把底部的 `you@example.com` 改成你的管理员邮箱。第二份迁移创建公开图片 bucket，并限制只有管理员可以上传、更新或删除。
 3. 在 Supabase Authentication 中启用 Email / Magic Link，并把本地及线上 `/admin` 地址加入 Redirect URLs。
 4. 若希望登录保持约 7 天，在 Supabase Auth 设置中把 refresh-token/session 策略设为对应时长。
 5. 复制 `.env.example` 为 `.env.local`，填入 Supabase URL 和 anon key。
@@ -67,6 +73,8 @@ pnpm preview
 ## 已实现的体验与无障碍
 
 - 800ms 草稿自动保存、保存状态和多标签页版本冲突提示。
+- 所有拖拽排序均提供可见的上移/下移键盘替代；删除需要二次确认。
+- 数据操作集中在 `src/content/contentModel.js`，公开页和后台共享同一份 versioned schema。
 - 编辑表单与同一个公开站点组件组成的实时预览，不维护两套页面。
 - 桌面/平板/手机尺寸切换；手机后台提供编辑/预览模式切换。
 - 发布前内联验证、错误摘要、部署状态和旧版本保留策略。

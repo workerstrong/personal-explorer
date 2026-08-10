@@ -169,9 +169,10 @@ a:focus-visible {
 
 .bento-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-flow: dense; gap: 1.25rem; }
 .grid-slot { min-width: 0; }
-.grid-slot--about { grid-column: span 2; grid-row: span 2; }
-.grid-slot--projects, .grid-slot--gallery, .grid-slot--goals, .grid-slot--contact { grid-column: span 2; }
-.grid-slot--skills { grid-row: span 2; }
+.grid-slot[data-size='wide'] { grid-column: span 2; }
+.grid-slot[data-size='hero'] { grid-column: span 2; grid-row: span 2; }
+.grid-slot[data-size='tall'] { grid-row: span 2; }
+.grid-slot[data-size='full'] { grid-column: 1 / -1; }
 
 .bento-card {
   position: relative;
@@ -192,6 +193,7 @@ a:focus-visible {
 .bento-card:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--color-border); }
 .bento-card--hero { min-height: 520px; }
 .bento-card--tall { min-height: 520px; }
+.bento-card--full { min-height: 320px; }
 
 .card-action {
   position: relative;
@@ -278,6 +280,9 @@ a:focus-visible {
 .modal-header h2 { margin: .2rem 0 0; font-family: 'Archivo', sans-serif; font-size: clamp(2rem, 6vw, 3.8rem); letter-spacing: -.05em; line-height: 1; }
 .modal-body { padding: clamp(1.5rem, 5vw, 3rem); }
 .detail-stack, .skill-groups, .project-list { display: grid; gap: 1.5rem; }
+.goals-list { display: grid; gap: .75rem; margin: 0; padding: 0; list-style: none; }
+.goals-list li { display: flex; align-items: flex-start; gap: .6rem; }
+.custom-link-list { display: flex; flex-wrap: wrap; gap: .75rem; }
 .lead-copy { margin: 0; font-size: clamp(1.05rem, 2vw, 1.25rem); line-height: 1.65; }
 .fact-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; margin: 1rem 0 0; }
 .fact-grid > div { padding: 1rem; border: 1px solid var(--color-border); border-radius: 1rem; }
@@ -325,8 +330,7 @@ a:focus-visible {
 
 @media (max-width: 980px) {
   .bento-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .grid-slot--about { grid-row: auto; }
-  .grid-slot--skills { grid-row: auto; }
+  .grid-slot[data-size='hero'], .grid-slot[data-size='tall'] { grid-row: auto; }
   .bento-card--hero, .bento-card--tall { min-height: 300px; }
 }
 
@@ -339,7 +343,7 @@ a:focus-visible {
   .intro-bottom, .section-heading, .site-footer { align-items: flex-start; flex-direction: column; }
   .intro-bottom { margin-top: 2.5rem; }
   .bento-grid { grid-template-columns: 1fr; gap: 1rem; }
-  .grid-slot--about, .grid-slot--projects, .grid-slot--gallery, .grid-slot--goals, .grid-slot--contact { grid-column: auto; }
+  .grid-slot[data-size] { grid-column: auto; grid-row: auto; }
   .bento-card, .bento-card--hero, .bento-card--tall { min-height: 260px; }
   .card-copy { margin-top: 2rem; }
   .goals-reveal ol, .fact-grid, .interest-grid, .social-list, .gallery-grid { grid-template-columns: 1fr; }

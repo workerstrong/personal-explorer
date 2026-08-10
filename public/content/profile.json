@@ -15,15 +15,18 @@
     "facts": [
       {
         "label": "Based in",
-        "value": "Kuala Lumpur"
+        "value": "Kuala Lumpur",
+        "_id": "fact-1"
       },
       {
         "label": "Currently learning",
-        "value": "Creative coding"
+        "value": "Creative coding",
+        "_id": "fact-2"
       },
       {
         "label": "Always carrying",
-        "value": "A camera"
+        "value": "A camera",
+        "_id": "fact-3"
       }
     ]
   },
@@ -32,13 +35,15 @@
       "school": "Your School or University",
       "program": "Your Programme / Major",
       "period": "2023 — Present",
-      "description": "Add a short note about what you study, enjoy, or have achieved here."
+      "description": "Add a short note about what you study, enjoy, or have achieved here.",
+      "_id": "education-1"
     },
     {
       "school": "Previous School",
       "program": "Secondary Education",
       "period": "2018 — 2022",
-      "description": "Mention a memorable activity, club, subject, or award."
+      "description": "Mention a memorable activity, club, subject, or award.",
+      "_id": "education-2"
     }
   ],
   "skillGroups": [
@@ -49,7 +54,8 @@
         "Photography",
         "Storytelling",
         "Figma"
-      ]
+      ],
+      "_id": "skillGroup-1"
     },
     {
       "title": "Build",
@@ -58,7 +64,8 @@
         "JavaScript",
         "React",
         "Git"
-      ]
+      ],
+      "_id": "skillGroup-2"
     },
     {
       "title": "Collaborate",
@@ -67,25 +74,30 @@
         "Research",
         "Presentation",
         "Teamwork"
-      ]
+      ],
+      "_id": "skillGroup-3"
     }
   ],
   "interests": [
     {
       "title": "Photography",
-      "note": "Finding honest moments in everyday places."
+      "note": "Finding honest moments in everyday places.",
+      "_id": "interest-1"
     },
     {
       "title": "Music",
-      "note": "Playlists for every mood, project, and journey."
+      "note": "Playlists for every mood, project, and journey.",
+      "_id": "interest-2"
     },
     {
       "title": "Technology",
-      "note": "Exploring how tools can feel more human."
+      "note": "Exploring how tools can feel more human.",
+      "_id": "interest-3"
     },
     {
       "title": "Travel",
-      "note": "New food, new streets, and new perspectives."
+      "note": "New food, new streets, and new perspectives.",
+      "_id": "interest-4"
     }
   ],
   "projects": [
@@ -99,7 +111,8 @@
         "Prototype"
       ],
       "link": "https://github.com/",
-      "linkLabel": "View project"
+      "linkLabel": "View project",
+      "_id": "project-1"
     },
     {
       "title": "After Class Stories",
@@ -110,7 +123,8 @@
         "Editorial"
       ],
       "link": "https://drive.google.com/",
-      "linkLabel": "Open photo essay"
+      "linkLabel": "Open photo essay",
+      "_id": "project-2"
     },
     {
       "title": "Study Together",
@@ -122,51 +136,60 @@
         "Presentation"
       ],
       "link": "https://example.com/",
-      "linkLabel": "Read the story"
+      "linkLabel": "Read the story",
+      "_id": "project-3"
     }
   ],
   "gallery": [
     {
       "src": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
       "alt": "Person standing near a lake surrounded by mountains",
-      "caption": "Slow mornings, big views"
+      "caption": "Slow mornings, big views",
+      "_id": "gallery-1"
     },
     {
       "src": "https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=1200&q=80",
       "alt": "Modern geometric building facade against a blue sky",
-      "caption": "Lines I noticed"
+      "caption": "Lines I noticed",
+      "_id": "gallery-2"
     },
     {
       "src": "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1200&q=80",
       "alt": "Crowd enjoying a colourful outdoor music festival",
-      "caption": "Good noise, good people"
+      "caption": "Good noise, good people",
+      "_id": "gallery-3"
     },
     {
       "src": "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1200&q=80",
       "alt": "Friends sitting together outdoors at sunset",
-      "caption": "People who feel like home"
+      "caption": "People who feel like home",
+      "_id": "gallery-4"
     }
   ],
   "socials": [
     {
       "platform": "Instagram",
       "handle": "@yourusername",
-      "url": "https://instagram.com/"
+      "url": "https://instagram.com/",
+      "_id": "social-1"
     },
     {
       "platform": "GitHub",
       "handle": "yourusername",
-      "url": "https://github.com/"
+      "url": "https://github.com/",
+      "_id": "social-2"
     },
     {
       "platform": "YouTube",
       "handle": "Your channel",
-      "url": "https://youtube.com/"
+      "url": "https://youtube.com/",
+      "_id": "social-3"
     },
     {
       "platform": "LinkedIn",
       "handle": "Your Name",
-      "url": "https://linkedin.com/"
+      "url": "https://linkedin.com/",
+      "_id": "social-4"
     }
   ],
   "goals": [
@@ -183,7 +206,14 @@
       "summary": "A quick introduction, plus a few small facts.",
       "icon": "user",
       "tone": "ink",
-      "size": "hero"
+      "size": "hero",
+      "interaction": "modal",
+      "contentType": "about",
+      "visible": true,
+      "customContent": {
+        "body": "",
+        "links": []
+      }
     },
     {
       "id": "projects",
@@ -192,7 +222,14 @@
       "summary": "Things I have made, tested, and learned from.",
       "icon": "folder",
       "tone": "blue",
-      "size": "wide"
+      "size": "wide",
+      "interaction": "modal",
+      "contentType": "projects",
+      "visible": true,
+      "customContent": {
+        "body": "",
+        "links": []
+      }
     },
     {
       "id": "education",
@@ -201,7 +238,14 @@
       "summary": "Where I study and what keeps me curious.",
       "icon": "graduation",
       "tone": "cream",
-      "size": "standard"
+      "size": "standard",
+      "interaction": "modal",
+      "contentType": "education",
+      "visible": true,
+      "customContent": {
+        "body": "",
+        "links": []
+      }
     },
     {
       "id": "skills",
@@ -210,7 +254,14 @@
       "summary": "Creative, technical, and human skills.",
       "icon": "sparkles",
       "tone": "violet",
-      "size": "tall"
+      "size": "tall",
+      "interaction": "modal",
+      "contentType": "skills",
+      "visible": true,
+      "customContent": {
+        "body": "",
+        "links": []
+      }
     },
     {
       "id": "gallery",
@@ -219,7 +270,14 @@
       "summary": "A few moments and places I wanted to keep.",
       "icon": "image",
       "tone": "photo",
-      "size": "wide"
+      "size": "wide",
+      "interaction": "modal",
+      "contentType": "gallery",
+      "visible": true,
+      "customContent": {
+        "body": "",
+        "links": []
+      }
     },
     {
       "id": "interests",
@@ -228,7 +286,14 @@
       "summary": "The subjects and activities that give me energy.",
       "icon": "heart",
       "tone": "yellow",
-      "size": "standard"
+      "size": "standard",
+      "interaction": "modal",
+      "contentType": "interests",
+      "visible": true,
+      "customContent": {
+        "body": "",
+        "links": []
+      }
     },
     {
       "id": "socials",
@@ -237,7 +302,14 @@
       "summary": "Find my work, photos, videos, and updates.",
       "icon": "share",
       "tone": "mint",
-      "size": "standard"
+      "size": "standard",
+      "interaction": "modal",
+      "contentType": "socials",
+      "visible": true,
+      "customContent": {
+        "body": "",
+        "links": []
+      }
     },
     {
       "id": "goals",
@@ -247,7 +319,13 @@
       "icon": "compass",
       "tone": "orange",
       "size": "wide",
-      "interaction": "expand"
+      "interaction": "expand",
+      "contentType": "goals",
+      "visible": true,
+      "customContent": {
+        "body": "",
+        "links": []
+      }
     },
     {
       "id": "contact",
@@ -256,10 +334,17 @@
       "summary": "Have an idea, opportunity, or simply a good question?",
       "icon": "mail",
       "tone": "black",
-      "size": "wide"
+      "size": "wide",
+      "interaction": "modal",
+      "contentType": "contact",
+      "visible": true,
+      "customContent": {
+        "body": "",
+        "links": []
+      }
     }
   ],
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "seo": {
     "title": "Alex Tan — Personal Explorer",
     "description": "I like turning curious ideas into thoughtful digital experiences, small experiments, and stories worth sharing.",

@@ -87,6 +87,10 @@ export function useDraftDocument(repository, enabled) {
     setDraft((current) => updateAtPath(current, path, value))
   }, [])
 
+  const replaceDraft = useCallback((nextDraft) => {
+    setDraft((current) => typeof nextDraft === 'function' ? nextDraft(current) : nextDraft)
+  }, [])
+
   const saveNow = useCallback(async (snapshot = contentRef.current) => {
     clearTimeout(timerRef.current)
     if (!snapshot || JSON.stringify(snapshot) === lastSavedRef.current) return revisionRef.current
@@ -103,6 +107,7 @@ export function useDraftDocument(repository, enabled) {
     error,
     conflict,
     updateField,
+    replaceDraft,
     saveNow,
     reload: load,
   }

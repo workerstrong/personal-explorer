@@ -12,7 +12,7 @@ export function BentoCard({ card, index, expanded, onActivate, profileData }) {
         <div
           className="card-photo"
           aria-hidden="true"
-          style={{ backgroundImage: `url(${profileData.gallery[0]?.src ?? ''})` }}
+          style={{ backgroundImage: `url(${card.image || profileData.gallery[0]?.src || ''})`, backgroundPosition: `${card.focusX ?? 50}% ${card.focusY ?? 50}%` }}
         />
       )}
       <button
@@ -20,7 +20,7 @@ export function BentoCard({ card, index, expanded, onActivate, profileData }) {
         type="button"
         onClick={onActivate}
         aria-expanded={isExpandable ? expanded : undefined}
-        aria-controls={isExpandable ? 'goals-reveal' : undefined}
+        aria-controls={isExpandable ? `${card.id}-reveal` : undefined}
         aria-label={`${isExpandable ? (expanded ? 'Collapse' : 'Expand') : 'Open'} ${card.title}`}
       >
         <div className="card-topline">

@@ -10,12 +10,13 @@ function cardFromHash(cards) {
 }
 
 export function PublicSite({ profileData, embedded = false }) {
+  const visibleCards = useMemo(() => profileData.cards.filter((card) => card.visible !== false), [profileData.cards])
   const modalCardIds = useMemo(
-    () => new Set(profileData.cards.filter((card) => card.interaction !== 'expand').map((card) => card.id)),
-    [profileData.cards],
+    () => new Set(visibleCards.filter((card) => card.interaction !== 'expand').map((card) => card.id)),
+    [visibleCards],
   )
-  const [activeCard, setActiveCard] = useState(() => embedded ? null : cardFromHash(profileData.cards))
-  const [goalsExpanded, setGoalsExpanded] = useState(false)
+  const [activeCard, setActiveCard] = useState(() => embedded ? null : cardFromHash(visibleCards))
+  const [expandedCard, setExpandedCard] = useState(null)
   const [theme, setTheme] = useState(() => embedded ? 'light' : (localStorage.getItem('profile-theme') || 'light'))
   const returnFocusRef = useRef(null)
 
@@ -49,7 +50,7 @@ export function PublicSite({ profileData, embedded = false }) {
 
   function activateCard(card, event) {
     if (card.interaction === 'expand') {
-      setGoalsExpanded((value) => !value)
+      setExpandedCard((value) => value === card.id ? null : card.id)
       return
     }
     returnFocusRef.current = event.currentTarget
@@ -99,18 +100,18 @@ export function PublicSite({ profileData, embedded = false }) {
           </div>
 
           <div className="bento-grid" id={embedded ? undefined : 'profile-grid'}>
-            {profileData.cards.map((card, index) => (
-              <div className={`grid-slot grid-slot--${card.id}`} key={card.id}>
+            {visibleCards.map((card, index) => (
+              <div className="grid-slot" data-size={card.size} key={card.id}>
                 <BentoCard
                   card={card}
                   index={index}
-                  expanded={card.id === 'goals' && goalsExpanded}
+                  expanded={card.id === expandedCard}
                   onActivate={(event) => activateCard(card, event)}
                   profileData={profileData}
                 />
-                {card.id === 'goals' && (
-                  <div className="goals-reveal" id={embedded ? undefined : 'goals-reveal'} hidden={!goalsExpanded}>
-                    <ol>{profileData.goals.map((goal) => <li key={goal}><Icon name="check" size={17} />{goal}</li>)}</ol>
+                {card.interaction === 'expand' && (
+                  <div className="goals-reveal" id={embedded ? undefined : `${card.id}-reveal`} hidden={card.id !== expandedCard}>
+                    <ProfileContent card={card} profileData={profileData} />
                   </div>
                 )}
               </div>
@@ -131,7 +132,7 @@ export function PublicSite({ profileData, embedded = false }) {
           onClose={closeModal}
           returnFocusRef={returnFocusRef}
         >
-          <ProfileContent id={selectedCard.id} profileData={profileData} />
+          <ProfileContent card={selectedCard} profileData={profileData} />
         </ProfileModal>
       )}
     </div>

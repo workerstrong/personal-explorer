@@ -43,6 +43,15 @@ function createLocalRepository() {
       localStorage.setItem(LOCAL_PUBLICATION_KEY, JSON.stringify({ content, revision, publishedAt: new Date().toISOString() }))
       return { mode: 'local', status: 'READY', publishedAt: new Date().toISOString() }
     },
+    async uploadImage(file) {
+      if (file.size > 1_500_000) throw new Error('本地演示模式的图片不能超过 1.5 MB。')
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onload = () => resolve(reader.result)
+        reader.onerror = () => reject(new Error('无法读取图片。'))
+        reader.readAsDataURL(file)
+      })
+    },
     async getDeploymentStatus() { return { status: 'READY' } },
   }
 }
@@ -122,6 +131,15 @@ function createCloudRepository() {
       const result = await response.json()
       if (!response.ok) throw new Error(result.error ?? '无法读取部署状态。')
       return result
+    },
+    async uploadImage(file) {
+      if (!file.type.startsWith('image/')) throw new Error('请选择图片文件。')
+      if (file.size > 8_000_000) throw new Error('图片不能超过 8 MB。')
+      const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg'
+      const path = `profile/${crypto.randomUUID()}.${extension}`
+      const { error } = await client.storage.from('profile-media').upload(path, file, { cacheControl: '31536000', upsert: false })
+      if (error) throw error
+      return client.storage.from('profile-media').getPublicUrl(path).data.publicUrl
     },
   }
 }
