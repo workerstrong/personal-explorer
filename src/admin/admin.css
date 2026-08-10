@@ -273,7 +273,7 @@
 .admin-card-details > summary { display: flex; min-height: 46px; align-items: center; gap: .55rem; cursor: pointer; list-style: none; }
 .admin-card-details > summary::-webkit-details-marker { display: none; }
 .admin-card-details > summary > span:last-child { margin-left: auto; color: var(--admin-muted); font-size: .7rem; text-transform: uppercase; }
-.admin-tone-dot { width: 18px; height: 18px; flex: none; border: 1px solid #18181b; border-radius: 50%; }
+.admin-tone-dot { position: relative; width: 18px; height: 18px; flex: none; overflow: hidden; border: 1px solid #18181b; border-radius: 50%; }
 .admin-card-settings { padding-top: 1rem; border-top: 1px solid var(--admin-border); }
 .admin-field-grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; }
 .admin-toggle-field { display: flex; align-items: flex-start; gap: .75rem; margin-bottom: 1.25rem; padding: .75rem; border-radius: .7rem; background: #eff6ff; }
