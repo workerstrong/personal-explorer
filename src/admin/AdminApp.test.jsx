@@ -2,6 +2,7 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it } from 'vitest'
 import App from '../App.jsx'
+import { profile } from '../data/profile.js'
 
 describe('content workspace', () => {
   beforeEach(() => {
@@ -43,5 +44,17 @@ describe('content workspace', () => {
     await user.click(await screen.findByRole('button', { name: '新增卡片' }))
     expect(await screen.findByDisplayValue('New card')).toBeInTheDocument()
     expect(screen.getByText('自定义详情')).toBeInTheDocument()
+  })
+
+  it('offers a removable cover for every Bento card', async () => {
+    const user = userEvent.setup()
+    await enterDemo(user)
+    await user.click(screen.getByRole('button', { name: '页面构建器' }))
+
+    const coverUrls = await screen.findAllByLabelText('封面网址（可选）')
+    expect(coverUrls).toHaveLength(profile.cards.length)
+    await user.type(coverUrls[0], 'https://example.com/cover.webp')
+    await user.click(screen.getAllByRole('button', { name: '移除封面' })[0])
+    expect(coverUrls[0]).toHaveValue('')
   })
 })

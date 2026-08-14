@@ -230,10 +230,10 @@ a:focus-visible {
 .tone-mint { background: #a7f3d0; }
 .tone-orange { background: #fb923c; }
 .tone-black { background: #09090b; color: #fff; }
-.tone-photo { color: #fff; }
-.bento-card.tone-photo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(15deg, rgb(0 0 0 / 76%), rgb(0 0 0 / 4%) 70%); pointer-events: none; }
+.has-photo { color: #fff; }
+.bento-card.has-photo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(15deg, rgb(0 0 0 / 76%), rgb(0 0 0 / 4%) 70%); pointer-events: none; }
 .card-photo { position: absolute; inset: 0; background-position: center; background-size: cover; transition: transform 500ms var(--ease-out); }
-.tone-photo:hover .card-photo { transform: scale(1.035); }
+.has-photo:hover .card-photo { transform: scale(1.035); }
 
 .goals-reveal {
   margin-top: 1rem;

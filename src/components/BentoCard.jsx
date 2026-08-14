@@ -1,18 +1,19 @@
 import { Icon } from './Icon'
 
-export function BentoCard({ card, index, expanded, onActivate, profileData }) {
+export function BentoCard({ card, index, expanded, onActivate }) {
   const isExpandable = card.interaction === 'expand'
+  const hasPhoto = Boolean(card.image)
 
   return (
     <article
-      className={`bento-card bento-card--${card.size} tone-${card.tone} ${expanded ? 'is-expanded' : ''}`}
+      className={`bento-card bento-card--${card.size} tone-${card.tone} ${hasPhoto ? 'has-photo' : ''} ${expanded ? 'is-expanded' : ''}`}
       style={{ '--card-index': index }}
     >
-      {card.tone === 'photo' && (
+      {hasPhoto && (
         <div
           className="card-photo"
           aria-hidden="true"
-          style={{ backgroundImage: `url(${card.image || profileData.gallery[0]?.src || ''})`, backgroundPosition: `${card.focusX ?? 50}% ${card.focusY ?? 50}%` }}
+          style={{ backgroundImage: `url(${card.image})`, backgroundPosition: `${card.focusX ?? 50}% ${card.focusY ?? 50}%` }}
         />
       )}
       <button
