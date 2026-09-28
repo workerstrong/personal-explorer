@@ -289,7 +289,7 @@
 .admin-backup-panel { margin-top: 2rem; padding: 1rem; border: 1px solid var(--admin-border); border-radius: 1rem; background: #fff; }
 .admin-backup-panel > div { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1rem; }
 
-.admin-preview-pane { grid-column: 3; display: flex; min-width: 0; min-height: 0; flex-direction: column; border-left: 1px solid var(--admin-border); background: #f4f4f5; }
+.admin-preview-pane { grid-column: 3; display: flex; min-width: 0; min-height: 0; flex-direction: column; border-left: 1px solid var(--admin-border); background: #f4f4f5; transform: translate(0, 0); }
 .admin-preview-toolbar { display: flex; min-height: 56px; align-items: center; justify-content: space-between; gap: 1rem; padding: .5rem .9rem; border-bottom: 1px solid #c4c4c8; background: #fffdf7; }
 .admin-preview-toolbar > div:first-child { display: flex; align-items: center; gap: .5rem; font-size: .82rem; }
 .admin-device-switcher { display: flex; padding: .2rem; border: 1px solid var(--admin-border); border-radius: .65rem; background: #f4f4f5; }
@@ -298,6 +298,14 @@
 .admin-preview-scroll { min-height: 0; flex: 1; overflow: auto; padding: 1.5rem; }
 .admin-preview-page { min-height: 100%; margin: 0 auto; overflow: hidden; border: 1px solid #a1a1aa; border-radius: 1rem; background: #f5f2e9; box-shadow: 0 18px 50px rgb(24 24 27 / 16%); transform-origin: top center; }
 .admin-preview-page .site-shell--embedded { min-height: 100%; }
+/* The public modal layer is position:fixed. Inside the editable preview it must stay inside the
+   preview pane instead of covering the whole workspace (transform makes the pane its containing
+   block); otherwise opening a card made the sidebar, the editor and 发布 unclickable. */
+.admin-preview-pane .modal-layer { position: fixed; z-index: 40; }
+.admin-preview-pane .modal-panel { max-height: min(88dvh, 900px); }
+.admin-preview-error { display: grid; gap: .5rem; place-content: center; min-height: 60vh; padding: 2rem; text-align: center; color: #52525b; font-size: .82rem; }
+.admin-preview-error strong { color: #18181b; font-size: .95rem; }
+.admin-preview-error button { justify-self: center; padding: .5rem .9rem; cursor: pointer; border: 1px solid #18181b; border-radius: .6rem; background: #fff; font: inherit; }
 
 .admin-conflict,
 .admin-publish-message,

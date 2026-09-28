@@ -44,10 +44,14 @@ export function ToggleField({ label, path, checked, onChange, helper }) {
 }
 
 export function StringListField({ label, path, items = [], onChange, itemLabel = '项目' }) {
-  function update(index, value) { onChange(path, items.map((item, itemIndex) => itemIndex === index ? value : item)) }
-  function remove(index) { onChange(path, items.filter((_, itemIndex) => itemIndex !== index)) }
+  // Rows are keyed by position only. Keying them by the item text made React unmount and
+  // remount the focused input on every keystroke, which dropped the caret and swallowed
+  // every character after the first one.
+  const list = Array.isArray(items) ? items : []
+  function update(index, value) { onChange(path, list.map((item, itemIndex) => itemIndex === index ? value : item)) }
+  function remove(index) { onChange(path, list.filter((_, itemIndex) => itemIndex !== index)) }
   function move(index, offset) {
-    const next = [...items]
+    const next = [...list]
     const target = index + offset
     if (target < 0 || target >= next.length) return
     ;[next[index], next[target]] = [next[target], next[index]]
@@ -56,16 +60,16 @@ export function StringListField({ label, path, items = [], onChange, itemLabel =
   return (
     <fieldset className="admin-inline-list">
       <legend>{label}</legend>
-      {items.map((item, index) => (
-        <div className="admin-inline-list-row" key={`${index}-${item}`}>
+      {list.map((item, index) => (
+        <div className="admin-inline-list-row" key={index}>
           <label className="sr-only" htmlFor={`${path}.${index}`}>{itemLabel} {index + 1}</label>
-          <input id={`${path}.${index}`} value={item} onChange={(event) => update(index, event.target.value)} />
+          <input id={`${path}.${index}`} value={typeof item === 'string' || typeof item === 'number' ? item : ''} onChange={(event) => update(index, event.target.value)} />
           <button type="button" onClick={() => move(index, -1)} disabled={index === 0} aria-label={`上移${itemLabel} ${index + 1}`}>↑</button>
-          <button type="button" onClick={() => move(index, 1)} disabled={index === items.length - 1} aria-label={`下移${itemLabel} ${index + 1}`}>↓</button>
+          <button type="button" onClick={() => move(index, 1)} disabled={index === list.length - 1} aria-label={`下移${itemLabel} ${index + 1}`}>↓</button>
           <button type="button" className="is-danger" onClick={() => remove(index)} aria-label={`删除${itemLabel} ${index + 1}`}>×</button>
         </div>
       ))}
-      <button className="admin-add-compact" type="button" onClick={() => onChange(path, [...items, `New ${itemLabel}`])}>＋ 添加{itemLabel}</button>
+      <button className="admin-add-compact" type="button" onClick={() => onChange(path, [...list, `New ${itemLabel}`])}>＋ 添加{itemLabel}</button>
     </fieldset>
   )
 }

@@ -6,7 +6,35 @@ export const CONTENT_SCHEMA_VERSION = 2
 const collections = ['education', 'skillGroups', 'interests', 'projects', 'gallery', 'socials']
 
 function withStableIds(items, prefix) {
-  return items.map((item, index) => ({ ...item, _id: item._id || `${prefix}-${index + 1}` }))
+  if (!Array.isArray(items)) return []
+  return items
+    .filter((item) => item && typeof item === 'object')
+    .map((item, index) => ({ ...item, _id: item._id || `${prefix}-${index + 1}` }))
+}
+
+/**
+ * Every string list in the document (skill items, project tags, about paragraphs, goals)
+ * is stored as an array of strings. Drafts coming from an older or hand-edited JSON backup
+ * can hold a bare string or a non-array value; rendering those directly threw during render
+ * ("items.map is not a function") and blanked the whole workspace.
+ */
+function toStringList(value) {
+  if (Array.isArray(value)) {
+    return value.filter((item) => typeof item === 'string' || typeof item === 'number').map((item) => String(item))
+  }
+  if (typeof value === 'string' && value.trim()) return [value]
+  return []
+}
+
+function toObjectList(value) {
+  return Array.isArray(value) ? value.filter((item) => item && typeof item === 'object') : []
+}
+
+/** Keeps an intentionally emptied array empty, salvages a bare string, otherwise uses the fallback. */
+function toStringListOr(value, fallback) {
+  if (Array.isArray(value)) return toStringList(value)
+  const salvaged = toStringList(value)
+  return salvaged.length ? salvaged : toStringList(fallback)
 }
 
 function normalizeCard(card, index) {
@@ -29,7 +57,7 @@ function normalizeCard(card, index) {
     visible: card.visible !== false,
     customContent: {
       body: card.customContent?.body || '',
-      links: withStableIds(card.customContent?.links || [], `${id}-link`),
+      links: withStableIds(toObjectList(card.customContent?.links), `${id}-link`),
     },
   }
 }
@@ -55,7 +83,7 @@ export function normalizeProfileContent(value) {
     about: {
       ...fallbackProfile.about,
       ...(source.about || {}),
-      paragraphs: Array.isArray(source.about?.paragraphs) ? source.about.paragraphs : fallbackProfile.about.paragraphs,
+      paragraphs: toStringListOr(source.about?.paragraphs, fallbackProfile.about.paragraphs),
       facts: withStableIds(Array.isArray(source.about?.facts) ? source.about.facts : fallbackProfile.about.facts, 'fact'),
     },
     seo: {
@@ -64,14 +92,18 @@ export function normalizeProfileContent(value) {
       shareImage: source.gallery?.[0]?.src || fallbackProfile.gallery?.[0]?.src || '',
       ...(source.seo || {}),
     },
-    goals: Array.isArray(source.goals) ? source.goals : fallbackProfile.goals,
-    cards: (Array.isArray(source.cards) ? source.cards : fallbackProfile.cards).map(normalizeCard),
+    goals: toStringListOr(source.goals, fallbackProfile.goals),
+    cards: (Array.isArray(source.cards) ? source.cards : fallbackProfile.cards).filter((card) => card && typeof card === 'object').map(normalizeCard),
   }
 
   collections.forEach((key) => {
     const items = Array.isArray(source[key]) ? source[key] : fallbackProfile[key]
     normalized[key] = withStableIds(items, key.replace(/s$/, ''))
   })
+
+  // Per-item string lists stay arrays no matter what the stored draft contains.
+  normalized.skillGroups = normalized.skillGroups.map((group) => ({ ...group, items: toStringList(group.items) }))
+  normalized.projects = normalized.projects.map((project) => ({ ...project, tags: toStringList(project.tags) }))
 
   return structuredClone(normalized)
 }

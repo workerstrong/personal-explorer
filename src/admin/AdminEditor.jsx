@@ -1,6 +1,7 @@
 import { AlertTriangle, Check, Cloud, Database, Download, Eye, FileText, FolderKanban, GalleryHorizontal, Globe2, GraduationCap, Heart, LayoutGrid, LogOut, Monitor, RefreshCw, Search, Send, Share2, Smartphone, Sparkles, Tablet, Upload, UserRound } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { PublicSite } from '../PublicSite.jsx'
+import { ErrorBoundary } from '../components/ErrorBoundary.jsx'
 import { importContent } from '../content/contentModel.js'
 import { validateProfileContent } from '../content/profileSchema.js'
 import { Field, TextAreaField } from './AdminFields.jsx'
@@ -94,7 +95,14 @@ export function AdminEditor({ repository, session, documentState, onSignOut }) {
       {activeSection === 'cards' && <CardBuilder {...editorProps} />}
       {activeSection === 'seo' && <SeoBackupEditor {...editorProps} />}
     </main>
-    <section className="admin-preview-pane" aria-label="网站草稿预览"><header className="admin-preview-toolbar"><div><Eye size={18} /><strong>实时预览</strong></div><div className="admin-device-switcher" role="group" aria-label="预览尺寸">{Object.entries(devices).map(([id, config]) => { const DeviceIcon = config.icon; return <button type="button" key={id} className={device === id ? 'is-active' : ''} onClick={() => setDevice(id)} aria-label={`${config.label}预览`}><DeviceIcon size={17} /><span>{config.label}</span></button> })}</div></header><div className="admin-preview-scroll"><div className="admin-preview-page" style={{ width: currentDevice.width, zoom: currentDevice.zoom }}><PublicSite profileData={documentState.draft} embedded /></div></div></section>
+    <section className="admin-preview-pane" aria-label="网站草稿预览"><header className="admin-preview-toolbar"><div><Eye size={18} /><strong>实时预览</strong></div><div className="admin-device-switcher" role="group" aria-label="预览尺寸">{Object.entries(devices).map(([id, config]) => { const DeviceIcon = config.icon; return <button type="button" key={id} className={device === id ? 'is-active' : ''} onClick={() => setDevice(id)} aria-label={`${config.label}预览`}><DeviceIcon size={17} /><span>{config.label}</span></button> })}</div></header><div className="admin-preview-scroll"><div className="admin-preview-page" style={{ width: currentDevice.width, zoom: currentDevice.zoom }}>
+      <ErrorBoundary
+        title="预览渲染失败"
+        renderFallback={(error, reset) => <div className="admin-preview-error" role="alert"><AlertTriangle size={18} /><strong>预览渲染失败</strong><p>{error.message}</p><p>编辑区仍可继续使用，内容也已保留。修好内容后点「重试预览」。</p><button type="button" onClick={reset}>重试预览</button></div>}
+      >
+        <PublicSite profileData={documentState.draft} embedded />
+      </ErrorBoundary>
+      </div></div></section>
     <nav className="admin-mobile-tabs" aria-label="移动端工作区"><button type="button" className={mobileMode === 'edit' ? 'is-active' : ''} onClick={() => setMobileMode('edit')}><FileText size={18} />编辑</button><button type="button" className={mobileMode === 'preview' ? 'is-active' : ''} onClick={() => setMobileMode('preview')}><Eye size={18} />预览</button></nav>
   </div>
 }

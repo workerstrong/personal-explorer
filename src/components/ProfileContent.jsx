@@ -1,13 +1,18 @@
 import { ExternalLink } from './ExternalLink'
 import { Icon } from './Icon'
 
+// Stored drafts can be older or hand-edited, and a single non-array list used to throw during
+// render and blank the whole page (public site and admin preview alike). List keys never use the
+// item text itself: duplicate values (two skills named the same) are legal content but not legal keys.
+const list = (value) => Array.isArray(value) ? value : []
+
 function AboutContent({ profile }) {
   return (
     <div className="detail-stack">
-      {profile.about.paragraphs.map((paragraph, index) => <p className="lead-copy" key={`${index}-${paragraph}`}>{paragraph}</p>)}
+      {list(profile.about?.paragraphs).map((paragraph, index) => <p className="lead-copy" key={index}>{paragraph}</p>)}
       <dl className="fact-grid">
-        {profile.about.facts.map((fact) => (
-          <div key={fact._id || fact.label}><dt>{fact.label}</dt><dd>{fact.value}</dd></div>
+        {list(profile.about?.facts).map((fact, index) => (
+          <div key={fact?._id || index}><dt>{fact?.label}</dt><dd>{fact?.value}</dd></div>
         ))}
       </dl>
     </div>
@@ -17,8 +22,8 @@ function AboutContent({ profile }) {
 function EducationContent({ profile }) {
   return (
     <ol className="timeline">
-      {profile.education.map((item) => (
-        <li key={item._id || `${item.school}-${item.period}`}>
+      {list(profile.education).map((item, index) => (
+        <li key={item?._id || index}>
           <span className="timeline-dot" aria-hidden="true" />
           <p className="detail-meta">{item.period}</p>
           <h3>{item.school}</h3>
@@ -33,10 +38,10 @@ function EducationContent({ profile }) {
 function SkillsContent({ profile }) {
   return (
     <div className="skill-groups">
-      {profile.skillGroups.map((group) => (
-        <section key={group._id || group.title}>
+      {list(profile.skillGroups).map((group, groupIndex) => (
+        <section key={group?._id || groupIndex}>
           <h3>{group.title}</h3>
-          <ul className="tag-list">{group.items.map((item) => <li key={item}>{item}</li>)}</ul>
+          <ul className="tag-list">{list(group.items).map((item, index) => <li key={index}>{item}</li>)}</ul>
         </section>
       ))}
     </div>
@@ -46,14 +51,14 @@ function SkillsContent({ profile }) {
 function ProjectsContent({ profile }) {
   return (
     <div className="project-list">
-      {profile.projects.map((project, index) => (
-        <article className="project-item" key={project._id || project.title}>
+      {list(profile.projects).map((project, index) => (
+        <article className="project-item" key={project?._id || index}>
           <div className="project-index">0{index + 1}</div>
           <div>
             <p className="detail-meta">{project.type}</p>
             <h3>{project.title}</h3>
             <p>{project.description}</p>
-            <ul className="tag-list">{project.tags.map((tag) => <li key={tag}>{tag}</li>)}</ul>
+            <ul className="tag-list">{list(project.tags).map((tag, tagIndex) => <li key={tagIndex}>{tag}</li>)}</ul>
             <ExternalLink href={project.link}>{project.linkLabel}</ExternalLink>
           </div>
         </article>
@@ -65,8 +70,8 @@ function ProjectsContent({ profile }) {
 function InterestsContent({ profile }) {
   return (
     <div className="interest-grid">
-      {profile.interests.map((interest, index) => (
-        <article key={interest._id || interest.title}>
+      {list(profile.interests).map((interest, index) => (
+        <article key={interest?._id || index}>
           <span>0{index + 1}</span><h3>{interest.title}</h3><p>{interest.note}</p>
         </article>
       ))}
@@ -77,8 +82,8 @@ function InterestsContent({ profile }) {
 function GalleryContent({ profile }) {
   return (
     <div className="gallery-grid">
-      {profile.gallery.map((image) => (
-        <figure key={image._id || image.src}>
+      {list(profile.gallery).map((image, index) => (
+        <figure key={image?._id || index}>
           <img src={image.src} alt={image.alt} loading="lazy" width="800" height="600" style={{ objectPosition: `${image.focusX ?? 50}% ${image.focusY ?? 50}%` }} />
           <figcaption>{image.caption}</figcaption>
         </figure>
@@ -90,8 +95,8 @@ function GalleryContent({ profile }) {
 function SocialsContent({ profile }) {
   return (
     <div className="social-list">
-      {profile.socials.map((social) => (
-        <ExternalLink href={social.url} key={social._id || social.platform} className="social-link">
+      {list(profile.socials).map((social, index) => (
+        <ExternalLink href={social.url} key={social?._id || index} className="social-link">
           <span><strong>{social.platform}</strong><small>{social.handle}</small></span>
         </ExternalLink>
       ))}
@@ -100,15 +105,15 @@ function SocialsContent({ profile }) {
 }
 
 function GoalsContent({ profile }) {
-  return <ol className="goals-list">{profile.goals.map((goal, index) => <li key={`${index}-${goal}`}><Icon name="check" size={17} />{goal}</li>)}</ol>
+  return <ol className="goals-list">{list(profile.goals).map((goal, index) => <li key={index}><Icon name="check" size={17} />{goal}</li>)}</ol>
 }
 
 function CustomContent({ card }) {
   return (
     <div className="detail-stack">
-      {card.customContent?.body?.split(/\n\n+/).filter(Boolean).map((paragraph, index) => <p className="lead-copy" key={`${index}-${paragraph}`}>{paragraph}</p>)}
+      {String(card.customContent?.body ?? '').split(/\n\n+/).filter(Boolean).map((paragraph, index) => <p className="lead-copy" key={index}>{paragraph}</p>)}
       <div className="custom-link-list">
-        {card.customContent?.links?.map((link) => <ExternalLink href={link.url} key={link._id || link.url}>{link.label}</ExternalLink>)}
+        {list(card.customContent?.links).map((link, index) => <ExternalLink href={link?.url} key={link?._id || index}>{link?.label}</ExternalLink>)}
       </div>
     </div>
   )
