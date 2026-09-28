@@ -60,6 +60,36 @@ VITE_SUPABASE_ANON_KEY=YOUR_ANON_KEY
 
 数据库的 RLS 策略只允许白名单管理员读写草稿；公开角色只能读取已发布内容。服务端发布接口还会再次核对 `ADMIN_EMAIL`，形成第二道保护。
 
+## 防止 Supabase 免费项目被自动暂停（保活）
+
+Supabase 免费方案会暂停过去 7 天缺少数据库活动的项目。这个站点在运行时是纯静态的：访客读的是构建时生成的 `public/content/profile.json`，图片走 Storage（不算数据库活动），只有你自己登录 `/admin` 时才会查询 `site_drafts` 和 `site_publications`。所以只要几周没进后台，项目就会被暂停，届时后台登录会报 `Failed to fetch`，托管在 Supabase Storage 的图片也会一起失效。
+
+为此项目提供了 `/api/keepalive` 端点，并在 `vercel.json` 的 `crons` 中注册：
+
+- Vercel Cron 每天在 02:00 / 10:00 / 18:00（UTC）各调用一次 `/api/keepalive`
+- 该接口会真实查询 `site_publications` 和 `site_drafts` 各一次，足以被算作「用户数据库活动」
+- 任一查询失败时返回 502，并在 `hint` 字段直接提示项目可能已被暂停
+
+手动验证：直接打开 `https://<你的域名>/api/keepalive`，正常情况下返回：
+
+```json
+{ "ok": true, "succeeded": 2, "attempted": 2, "results": [ ... ] }
+```
+
+注意事项：
+
+- 可在 Vercel 环境变量中加上 `CRON_SECRET`（任意长随机字符串），匿名请求就会被拒绝；Vercel Cron 会自动把同一个值放进 `Authorization` header。
+- Hobby 方案的 cron 每天只能触发一次（每个 entry 的表达式都必须不超过一天一次，且执行时间只保证落在该小时内），所以这里用了三个每天一次的 entry。想要更高频率，可以用 cron-job.org 之类的免费外部排程，每 30 分钟请求一次：
+
+  ```text
+  URL: https://<项目 ref>.supabase.co/rest/v1/site_publications?id=eq.profile&select=revision
+  Header: apikey: <你的 anon key>
+  ```
+
+  必须带上 `apikey` header，否则只会得到 401，不会真正查询数据库。
+- 最省事的替代方案是升级到 Supabase Pro，付费项目不会被暂停。
+- ⚠️ Supabase 不可用时执行 `pnpm build`（或 Vercel 上的任何一次构建），`scripts/generate-content.mjs` 会读不到已发布内容而回退到 `src/data/profile.js`，把 `public/content/profile.json` 覆盖成模板内容。所以项目处于暂停状态时先不要重新部署，去 Supabase Dashboard 点 **Resume project**。
+
 ## 检查与构建
 
 ```bash
