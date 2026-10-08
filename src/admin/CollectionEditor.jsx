@@ -6,7 +6,7 @@ function ConfirmDelete({ onConfirm, label }) {
   const [armed, setArmed] = useState(false)
   return armed ? (
     <span className="admin-confirm-delete">
-      <button type="button" className="is-danger" onClick={onConfirm}>确认删除</button>
+      <button type="button" className="is-danger" onClick={() => { onConfirm(); setArmed(false) }}>确认删除</button>
       <button type="button" onClick={() => setArmed(false)}>取消</button>
     </span>
   ) : <button type="button" onClick={() => setArmed(true)} aria-label={`删除${label}`}><Trash2 size={16} /></button>

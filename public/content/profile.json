@@ -211,7 +211,7 @@
       "contentType": "about",
       "visible": true,
       "customContent": {
-        "body": "",
+        "paragraphs": [],
         "links": []
       }
     },
@@ -227,7 +227,7 @@
       "contentType": "projects",
       "visible": true,
       "customContent": {
-        "body": "",
+        "paragraphs": [],
         "links": []
       }
     },
@@ -243,7 +243,7 @@
       "contentType": "education",
       "visible": true,
       "customContent": {
-        "body": "",
+        "paragraphs": [],
         "links": []
       }
     },
@@ -259,7 +259,7 @@
       "contentType": "skills",
       "visible": true,
       "customContent": {
-        "body": "",
+        "paragraphs": [],
         "links": []
       }
     },
@@ -275,7 +275,7 @@
       "contentType": "gallery",
       "visible": true,
       "customContent": {
-        "body": "",
+        "paragraphs": [],
         "links": []
       }
     },
@@ -291,7 +291,7 @@
       "contentType": "interests",
       "visible": true,
       "customContent": {
-        "body": "",
+        "paragraphs": [],
         "links": []
       }
     },
@@ -307,7 +307,7 @@
       "contentType": "socials",
       "visible": true,
       "customContent": {
-        "body": "",
+        "paragraphs": [],
         "links": []
       }
     },
@@ -323,7 +323,7 @@
       "contentType": "goals",
       "visible": true,
       "customContent": {
-        "body": "",
+        "paragraphs": [],
         "links": []
       }
     },
@@ -339,12 +339,12 @@
       "contentType": "contact",
       "visible": true,
       "customContent": {
-        "body": "",
+        "paragraphs": [],
         "links": []
       }
     }
   ],
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "seo": {
     "title": "Alex Tan — Personal Explorer",
     "description": "I like turning curious ideas into thoughtful digital experiences, small experiments, and stories worth sharing.",

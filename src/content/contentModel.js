@@ -39,7 +39,7 @@ export function createCard() {
     interaction: 'modal',
     contentType: 'custom',
     visible: true,
-    customContent: { body: 'Write the full content for this card.', links: [] },
+    customContent: { paragraphs: [''], links: [] },
   }
 }
 

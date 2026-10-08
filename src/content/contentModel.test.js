@@ -3,7 +3,7 @@ import { addItem, createCard, createCollectionItem, duplicateItem, importContent
 import { CONTENT_SCHEMA_VERSION, createInitialContent, normalizeProfileContent } from './profileSchema.js'
 
 describe('content model', () => {
-  it('migrates version one arrays to stable version two identities', () => {
+  it('migrates version one arrays to stable identities', () => {
     const migrated = normalizeProfileContent({ schemaVersion: 1, projects: [{ title: 'Legacy project' }] })
     expect(migrated.schemaVersion).toBe(CONTENT_SCHEMA_VERSION)
     expect(migrated.projects[0]._id).toBe('project-1')
@@ -30,7 +30,7 @@ describe('content model', () => {
     const card = imported.cards.at(-1)
 
     expect(card.contentType).toBe('custom')
-    expect(card.customContent.body).toBeTruthy()
+    expect(card.customContent.paragraphs).toEqual([''])
     expect(card.visible).toBe(true)
   })
 })

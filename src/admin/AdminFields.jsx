@@ -1,3 +1,5 @@
+import { useLayoutEffect, useRef } from 'react'
+
 function errorId(path) { return `error-${path.replaceAll('.', '-')}` }
 
 export function Field({ label, path, value, onChange, error, helper, type = 'text', required = false, min, max }) {
@@ -11,11 +13,24 @@ export function Field({ label, path, value, onChange, error, helper, type = 'tex
   )
 }
 
-export function TextAreaField({ label, path, value, onChange, error, helper, rows = 4, required = false }) {
+export function TextAreaField({ label, path, value, onChange, error, helper, rows = 4, required = false, autoResize = false }) {
+  const textareaRef = useRef(null)
+  useLayoutEffect(() => {
+    if (!autoResize) return undefined
+    const textarea = textareaRef.current
+    function resize() {
+      textarea.style.height = 'auto'
+      textarea.style.height = `${textarea.scrollHeight + textarea.offsetHeight - textarea.clientHeight}px`
+    }
+    resize()
+    window.addEventListener('resize', resize)
+    return () => window.removeEventListener('resize', resize)
+  }, [autoResize, value])
+
   return (
     <div className="admin-field">
       <label htmlFor={path}>{label}{required && <span className="admin-required" aria-hidden="true"> *</span>}</label>
-      <textarea id={path} rows={rows} value={value ?? ''} onChange={(event) => onChange(path, event.target.value)} aria-invalid={Boolean(error)} aria-describedby={error ? errorId(path) : helper ? `${path}-help` : undefined} required={required} />
+      <textarea ref={textareaRef} className={autoResize ? 'is-auto-resizing' : undefined} id={path} rows={rows} value={value ?? ''} onChange={(event) => onChange(path, event.target.value)} aria-invalid={Boolean(error)} aria-describedby={error ? errorId(path) : helper ? `${path}-help` : undefined} required={required} />
       {helper && !error && <p className="admin-help" id={`${path}-help`}>{helper}</p>}
       {error && <p className="admin-field-error" id={errorId(path)}>{error}</p>}
     </div>

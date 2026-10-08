@@ -1,7 +1,7 @@
 import { profile as fallbackProfile } from '../data/profile.js'
 
 export const SITE_ID = 'profile'
-export const CONTENT_SCHEMA_VERSION = 2
+export const CONTENT_SCHEMA_VERSION = 3
 
 const collections = ['education', 'skillGroups', 'interests', 'projects', 'gallery', 'socials']
 
@@ -50,13 +50,13 @@ function normalizeCard(card, index) {
     interaction: 'modal',
     contentType: id,
     visible: true,
-    customContent: { body: '', links: [] },
+    customContent: { paragraphs: [], links: [] },
     ...card,
     interaction: card.interaction || 'modal',
     contentType: card.contentType || id,
     visible: card.visible !== false,
     customContent: {
-      body: card.customContent?.body || '',
+      paragraphs: toStringListOr(card.customContent?.paragraphs, String(card.customContent?.body ?? '').split(/\r?\n(?:[ \t]*\r?\n)+/).filter(Boolean)),
       links: withStableIds(toObjectList(card.customContent?.links), `${id}-link`),
     },
   }

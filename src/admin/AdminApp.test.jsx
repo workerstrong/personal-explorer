@@ -1,8 +1,9 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it } from 'vitest'
 import App from '../App.jsx'
 import { profile } from '../data/profile.js'
+import { createInitialContent } from '../content/profileSchema.js'
 
 describe('content workspace', () => {
   beforeEach(() => {
@@ -57,4 +58,41 @@ describe('content workspace', () => {
     await user.click(screen.getAllByRole('button', { name: '移除封面' })[0])
     expect(coverUrls[0]).toHaveValue('')
   })
+
+  it('adds, edits, saves and deletes custom text boxes while keeping legacy content', async () => {
+    const content = createInitialContent()
+    content.cards.push({ id: 'custom-text', title: '旧卡片', summary: '简介', contentType: 'custom', customContent: { body: '长路迢迢路漫漫', links: [] } })
+    localStorage.setItem('personal-explorer-cms-draft-v1', JSON.stringify({ content, revision: 1 }))
+    const user = userEvent.setup()
+    const view = render(<App />)
+    await user.click(await screen.findByRole('button', { name: /进入本地演示/ }))
+    await user.click(await screen.findByRole('button', { name: '页面构建器' }))
+    expect(await screen.findByLabelText('文字格 1')).toHaveValue('长路迢迢路漫漫')
+
+    await user.click(screen.getByRole('button', { name: '添加文字格' }))
+    await user.click(screen.getByRole('button', { name: '添加文字格' }))
+    const second = screen.getByLabelText('文字格 2')
+    await user.type(second, '第一句{enter}{enter}第二句')
+    expect(second).toHaveValue('第一句\n\n第二句')
+    expect(second).toHaveFocus()
+    expect(screen.getAllByLabelText(/^文字格 \d$/)).toHaveLength(3)
+    await waitFor(() => {
+      const saved = JSON.parse(localStorage.getItem('personal-explorer-cms-draft-v1'))
+      expect(saved.content.cards.at(-1).customContent.paragraphs).toEqual(['长路迢迢路漫漫', '第一句\n\n第二句', ''])
+    }, { timeout: 2500 })
+
+    view.unmount()
+    await enterDemo(user)
+    await user.click(await screen.findByRole('button', { name: '页面构建器' }))
+    expect(await screen.findByLabelText('文字格 2')).toHaveValue('第一句\n\n第二句')
+    expect(screen.getByLabelText('文字格 3')).toHaveValue('')
+    const paragraphs = screen.getByRole('region', { name: '正文' })
+    for (let remaining = 3; remaining > 0; remaining -= 1) {
+      await user.click(within(paragraphs).getByRole('button', { name: '删除正文第 1 项' }))
+      await user.click(within(paragraphs).getByRole('button', { name: '确认删除' }))
+      expect(within(paragraphs).queryAllByRole('textbox')).toHaveLength(remaining - 1)
+    }
+    await user.click(within(paragraphs).getByRole('button', { name: '添加文字格' }))
+    expect(screen.getByLabelText('文字格 1')).toHaveValue('')
+  }, 15000)
 })

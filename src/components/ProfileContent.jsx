@@ -111,7 +111,7 @@ function GoalsContent({ profile }) {
 function CustomContent({ card }) {
   return (
     <div className="detail-stack">
-      {String(card.customContent?.body ?? '').split(/\n\n+/).filter(Boolean).map((paragraph, index) => <p className="lead-copy" key={index}>{paragraph}</p>)}
+      {list(card.customContent?.paragraphs).filter((paragraph) => paragraph.trim()).map((paragraph, index) => <p className="lead-copy custom-paragraph" key={index}>{paragraph}</p>)}
       <div className="custom-link-list">
         {list(card.customContent?.links).map((link, index) => <ExternalLink href={link?.url} key={link?._id || index}>{link?.label}</ExternalLink>)}
       </div>

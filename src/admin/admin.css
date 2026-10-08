@@ -97,6 +97,7 @@
 .admin-login-form input,
 .admin-field input, .admin-field select, .admin-inline-list-row input { padding: .75rem .9rem; }
 .admin-field textarea { min-height: 112px; padding: .8rem .9rem; resize: vertical; line-height: 1.55; }
+.admin-field textarea.is-auto-resizing { min-height: 72px; resize: none; }
 
 .admin-login-form input:focus-visible,
 .admin-field input:focus-visible,
