@@ -33,4 +33,22 @@ describe('content model', () => {
     expect(card.customContent.paragraphs).toEqual([''])
     expect(card.visible).toBe(true)
   })
+
+  it('keeps goal text and URL together when adding, moving, duplicating and deleting goals', () => {
+    const original = normalizeProfileContent({ goals: [{ text: '已有目标', url: 'https://example.com/old' }] })
+    const goal = createCollectionItem('goal')
+    expect(goal).toMatchObject({ url: '' })
+    expect(typeof goal.text).toBe('string')
+    expect(goal._id).toBeTruthy()
+    const added = addItem(original, 'goals', { ...goal, text: '新目标', url: 'https://example.com/new' })
+    const moved = moveItem(added, 'goals', 1, 0)
+    const duplicated = duplicateItem(moved, 'goals', 0)
+    const removed = removeItem(duplicated, 'goals', 0)
+    expect(moved.goals[0]).toMatchObject({ text: '新目标', url: 'https://example.com/new' })
+    expect(duplicated.goals[0]._id).not.toBe(duplicated.goals[1]._id)
+    expect(removed.goals.map(({ text, url }) => ({ text, url }))).toEqual([
+      { text: '新目标', url: 'https://example.com/new' }, { text: '已有目标', url: 'https://example.com/old' },
+    ])
+    expect(original.goals).toHaveLength(1)
+  })
 })

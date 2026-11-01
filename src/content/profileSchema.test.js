@@ -40,29 +40,37 @@ describe('profile content schema', () => {
     expect(result.errors['cards.0.title']).toBeTruthy()
   })
 
-  it.each(['https://example.com/goals', 'http://example.com/goals', ' https://example.com/goals '])('accepts a complete web URL for a link card: %s', (linkUrl) => {
-    const content = createInitialContent()
-    content.cards[0] = { ...content.cards[0], interaction: 'link', linkUrl }
-    const reloaded = normalizeProfileContent(JSON.parse(JSON.stringify(content)))
-
-    expect(reloaded.cards[0]).toMatchObject({ interaction: 'link', linkUrl })
-    expect(validateProfileContent(reloaded).errors['cards.0.linkUrl']).toBeUndefined()
-    expect(validateProfileContent(reloaded).isValid).toBe(true)
+  it('migrates old goal text without losing order, duplicates or blank entries', () => {
+    const content = normalizeProfileContent({ schemaVersion: 3, goals: ['第一项', '', '第一项'] })
+    expect(content.schemaVersion).toBe(4)
+    expect(content.goals.map(({ text, url }) => ({ text, url }))).toEqual([
+      { text: '第一项', url: '' }, { text: '', url: '' }, { text: '第一项', url: '' },
+    ])
+    expect(new Set(content.goals.map((goal) => goal._id)).size).toBe(3)
+    expect(normalizeProfileContent(JSON.parse(JSON.stringify(content))).goals).toEqual(content.goals)
+    expect(normalizeProfileContent({ goals: [] }).goals).toEqual([])
   })
 
-  it.each([undefined, '', '   ', 'https://', 'https:example.com', 'https:/example.com', 'example.com', '/goals', '//example.com', 'javascript:alert(1)', 'data:text/html,test', 'mailto:hello@example.com'])('requires a safe absolute web URL for a link card: %s', (linkUrl) => {
-    const content = createInitialContent()
-    content.cards[0] = { ...content.cards[0], interaction: 'link', linkUrl }
-    const validation = validateProfileContent(content)
-
-    expect(validation.errors['cards.0.linkUrl']).toBeTruthy()
-    expect(validation.isValid).toBe(false)
+  it('preserves linked goals alongside legacy text on reload', () => {
+    const content = normalizeProfileContent({ goals: ['旧目标', { _id: 'saved-goal', text: '新目标', url: 'https://example.com/goal' }] })
+    expect(content.goals[0]).toMatchObject({ text: '旧目标', url: '' })
+    expect(content.goals[1]).toEqual({ _id: 'saved-goal', text: '新目标', url: 'https://example.com/goal' })
+    expect(normalizeProfileContent(JSON.parse(JSON.stringify(content))).goals).toEqual(content.goals)
   })
 
-  it('does not require a card URL for existing modal or expanded cards', () => {
-    const content = createInitialContent()
-    expect(content.cards.some((card) => card.interaction === 'expand')).toBe(true)
-    expect(content.cards.some((card) => card.interaction === 'modal')).toBe(true)
+  it('still validates version three publications with raw text goals', () => {
+    const content = { ...createInitialContent(), schemaVersion: 3, goals: ['原目标', '重复', '重复', ''] }
     expect(validateProfileContent(content).isValid).toBe(true)
+    expect(content.goals).toEqual(['原目标', '重复', '重复', ''])
+  })
+
+  it.each(['', '   ', 'https://example.com/goal', ' http://example.com/goal '])('accepts an optional goal URL: %s', (url) => {
+    const content = normalizeProfileContent({ goals: [{ text: '目标', url }] })
+    expect(validateProfileContent(content).isValid).toBe(true)
+  })
+
+  it.each(['https://', 'https:example.com', 'https:/example.com', 'example.com', '/goal', '//example.com', 'javascript:alert(1)', 'data:text/html,test'])('rejects an invalid goal URL: %s', (url) => {
+    const content = normalizeProfileContent({ goals: [{ text: '目标', url }] })
+    expect(validateProfileContent(content).errors['goals.0.url']).toBeTruthy()
   })
 })

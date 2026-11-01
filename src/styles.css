@@ -211,7 +211,6 @@ a:focus-visible {
   background: transparent;
   color: inherit;
   text-align: left;
-  text-decoration: none;
 }
 .card-topline { display: flex; align-items: center; justify-content: space-between; }
 .card-icon { display: grid; place-items: center; width: 48px; height: 48px; border: 2px solid currentColor; border-radius: 50%; }
@@ -283,6 +282,7 @@ a:focus-visible {
 .detail-stack, .skill-groups, .project-list { display: grid; gap: 1.5rem; }
 .goals-list { display: grid; gap: .75rem; margin: 0; padding: 0; list-style: none; }
 .goals-list li { display: flex; align-items: flex-start; gap: .6rem; }
+.goals-list .goal-link { margin: 0; overflow-wrap: anywhere; }
 .custom-link-list { display: flex; flex-wrap: wrap; gap: .75rem; }
 .lead-copy { margin: 0; font-size: clamp(1.05rem, 2vw, 1.25rem); line-height: 1.65; }
 .custom-paragraph { white-space: pre-wrap; overflow-wrap: anywhere; }

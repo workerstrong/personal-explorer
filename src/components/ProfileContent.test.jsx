@@ -34,4 +34,29 @@ describe('ProfileContent', () => {
     expect(document.querySelectorAll('.tag-list li')).toHaveLength(0)
     spy.mockRestore()
   })
+
+  it('opens individual future goals as external links while leaving unlinked goals as text', () => {
+    const content = normalizeProfileContent({ goals: [
+      { text: '学习计划', url: ' https://example.com/plan ' },
+      { text: '纯文字目标', url: '' },
+      { text: '', url: 'https://example.com/next' },
+    ] })
+    const { getByRole, getByText, queryByRole } = render(<ProfileContent card={{ id: 'goals' }} profileData={content} />)
+    const link = getByRole('link', { name: /^学习计划/ })
+    expect(link).toHaveAttribute('href', 'https://example.com/plan')
+    expect(link).toHaveAttribute('target', '_blank')
+    expect(link).toHaveAttribute('rel', expect.stringContaining('noreferrer'))
+    expect(getByText('纯文字目标')).toBeInTheDocument()
+    expect(queryByRole('link', { name: /纯文字目标/ })).not.toBeInTheDocument()
+    expect(getByRole('link', { name: /^https:\/\/example.com\/next/ })).toHaveAttribute('href', 'https://example.com/next')
+  })
+
+  it('renders raw legacy goal strings and does not turn unsafe goal URLs into links', () => {
+    const content = normalizeProfileContent({})
+    content.goals = ['旧目标', { text: '不安全链接', url: 'javascript:alert(1)' }]
+    const { getByText, queryByRole } = render(<ProfileContent card={{ id: 'goals' }} profileData={content} />)
+    expect(getByText('旧目标')).toBeInTheDocument()
+    expect(getByText('不安全链接')).toBeInTheDocument()
+    expect(queryByRole('link')).not.toBeInTheDocument()
+  })
 })

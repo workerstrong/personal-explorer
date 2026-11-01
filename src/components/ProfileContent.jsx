@@ -1,5 +1,6 @@
 import { ExternalLink } from './ExternalLink'
 import { Icon } from './Icon'
+import { getWebUrl } from '../content/profileSchema.js'
 
 // Stored drafts can be older or hand-edited, and a single non-array list used to throw during
 // render and blank the whole page (public site and admin preview alike). List keys never use the
@@ -105,7 +106,11 @@ function SocialsContent({ profile }) {
 }
 
 function GoalsContent({ profile }) {
-  return <ol className="goals-list">{list(profile.goals).map((goal, index) => <li key={index}><Icon name="check" size={17} />{goal}</li>)}</ol>
+  return <ol className="goals-list">{list(profile.goals).map((goal, index) => {
+    const text = typeof goal === 'string' ? goal : goal?.text || goal?.url
+    const href = getWebUrl(goal?.url)
+    return <li key={goal?._id || index}><Icon name="check" size={17} />{href ? <ExternalLink href={href} className="goal-link">{text}</ExternalLink> : text}</li>
+  })}</ol>
 }
 
 function CustomContent({ card }) {

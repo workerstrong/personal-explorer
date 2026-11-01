@@ -1,7 +1,7 @@
 import { profile as fallbackProfile } from '../data/profile.js'
 
 export const SITE_ID = 'profile'
-export const CONTENT_SCHEMA_VERSION = 3
+export const CONTENT_SCHEMA_VERSION = 4
 
 const collections = ['education', 'skillGroups', 'interests', 'projects', 'gallery', 'socials']
 
@@ -13,7 +13,7 @@ function withStableIds(items, prefix) {
 }
 
 /**
- * Every string list in the document (skill items, project tags, about paragraphs, goals)
+ * Every string list in the document (skill items, project tags, about paragraphs)
  * is stored as an array of strings. Drafts coming from an older or hand-edited JSON backup
  * can hold a bare string or a non-array value; rendering those directly threw during render
  * ("items.map is not a function") and blanked the whole workspace.
@@ -35,6 +35,12 @@ function toStringListOr(value, fallback) {
   if (Array.isArray(value)) return toStringList(value)
   const salvaged = toStringList(value)
   return salvaged.length ? salvaged : toStringList(fallback)
+}
+
+function normalizeGoals(value) {
+  const items = Array.isArray(value) ? value : toStringList(value)
+  return withStableIds(items.map((goal) => typeof goal === 'string' || typeof goal === 'number' ? { text: String(goal), url: '' } : goal), 'goal')
+    .map((goal) => ({ ...goal, text: typeof goal.text === 'string' ? goal.text : '', url: typeof goal.url === 'string' ? goal.url : '' }))
 }
 
 function normalizeCard(card, index) {
@@ -92,7 +98,7 @@ export function normalizeProfileContent(value) {
       shareImage: source.gallery?.[0]?.src || fallbackProfile.gallery?.[0]?.src || '',
       ...(source.seo || {}),
     },
-    goals: toStringListOr(source.goals, fallbackProfile.goals),
+    goals: normalizeGoals(Array.isArray(source.goals) ? source.goals : toStringListOr(source.goals, fallbackProfile.goals)),
     cards: (Array.isArray(source.cards) ? source.cards : fallbackProfile.cards).filter((card) => card && typeof card === 'object').map(normalizeCard),
   }
 
@@ -108,13 +114,13 @@ export function normalizeProfileContent(value) {
   return structuredClone(normalized)
 }
 
-export function getCardLink(card) {
-  if (typeof card.linkUrl !== 'string') return ''
-  const value = card.linkUrl.trim()
-  if (!/^https?:\/\//i.test(value)) return ''
+export function getWebUrl(value) {
+  if (typeof value !== 'string') return ''
+  const href = value.trim()
+  if (!/^https?:\/\//i.test(href)) return ''
   try {
-    const url = new URL(value)
-    return ['http:', 'https:'].includes(url.protocol) ? value : ''
+    const url = new URL(href)
+    return ['http:', 'https:'].includes(url.protocol) ? href : ''
   } catch {
     return ''
   }
@@ -146,11 +152,15 @@ export function validateProfileContent(content) {
     seenIds.add(card.id)
     if (!card.title?.trim()) errors[`cards.${index}.title`] = `第 ${index + 1} 张卡片缺少标题。`
     if (!card.summary?.trim()) errors[`cards.${index}.summary`] = `第 ${index + 1} 张卡片缺少简介。`
-    if (card.interaction === 'link' && !getCardLink(card)) errors[`cards.${index}.linkUrl`] = `第 ${index + 1} 张卡片需要完整的 http:// 或 https:// 网址。`
   })
 
   content.gallery?.forEach((image, index) => {
     if (image.src && !image.alt?.trim()) errors[`gallery.${index}.alt`] = `第 ${index + 1} 张图片需要替代文字。`
+  })
+
+  if (Array.isArray(content.goals)) content.goals.forEach((goal, index) => {
+    const url = typeof goal?.url === 'string' ? goal.url.trim() : goal?.url
+    if (url != null && url !== '' && !getWebUrl(url)) errors[`goals.${index}.url`] = `第 ${index + 1} 个目标的链接需要完整的 http:// 或 https:// 网址。`
   })
 
   return { errors, warnings, isValid: Object.keys(errors).length === 0 }

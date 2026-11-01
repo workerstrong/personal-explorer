@@ -29,7 +29,7 @@ describe('normalizeProfileContent repairs malformed drafts', () => {
     })
 
     expect(content.about.paragraphs).toEqual(['single paragraph stored as a string'])
-    expect(content.goals).toEqual(['one goal'])
+    expect(content.goals).toEqual([{ _id: 'goal-1', text: 'one goal', url: '' }])
     expect(content.skillGroups[0].items).toEqual(['w, Storytelling'])
     expect(content.skillGroups[1].items).toEqual([])
     expect(content.projects[0].tags).toEqual(['a,b'])

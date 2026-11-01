@@ -17,7 +17,7 @@ const factories = {
   project: () => ({ _id: id('project'), title: 'New project', type: 'Project type', description: 'What did you make or learn?', tags: ['New tag'], link: 'https://', linkLabel: 'View project' }),
   gallery: () => ({ _id: id('image'), src: '', alt: '', caption: 'New image', focusX: 50, focusY: 50 }),
   social: () => ({ _id: id('social'), platform: 'Platform', handle: '@username', url: 'https://' }),
-  goal: () => 'Add a future goal',
+  goal: () => ({ _id: id('goal'), text: 'Add a future goal', url: '' }),
   customLink: () => ({ _id: id('link'), label: 'Open link', url: 'https://' }),
 }
 

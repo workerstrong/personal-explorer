@@ -60,8 +60,8 @@ export function ContentEditor({ section, draft, errors, updateField, replaceDraf
     {(_, index) => <><div className="admin-field-row"><Field label="平台" path={`socials.${index}.platform`} value={draft.socials[index].platform} onChange={updateField} /><Field label="账号显示" path={`socials.${index}.handle`} value={draft.socials[index].handle} onChange={updateField} /></div><Field label="网址" type="url" path={`socials.${index}.url`} value={draft.socials[index].url} onChange={updateField} /></>}
   </CollectionEditor>
 
-  if (section === 'goals') return <CollectionEditor {...common} title="未来目标" path="goals" type="goal" items={draft.goals} addLabel="添加目标">
-    {(item, index) => <Field label={`目标 ${index + 1}`} path={`goals.${index}`} value={item} onChange={updateField} />}
+  if (section === 'goals') return <CollectionEditor {...common} title="未来目标" description="每项目标可以填写文字和链接；填入链接后，点击目标即可在新标签页打开。" path="goals" type="goal" items={draft.goals} addLabel="添加目标">
+    {(item, index) => <><Field label={`目标 ${index + 1}`} path={`goals.${index}.text`} value={item.text} onChange={updateField} /><Field label={`目标链接 ${index + 1}（可选）`} type="url" path={`goals.${index}.url`} value={item.url} onChange={updateField} error={errors[`goals.${index}.url`]} helper="粘贴完整的 http:// 或 https:// 网址；留空则只显示文字。" /></>}
   </CollectionEditor>
 
   return <CollectionEditor {...common} title="图片库" description="上传图片后可用滑杆选择卡片和画廊中的视觉焦点。" path="gallery" type="gallery" items={draft.gallery} addLabel="添加图片">

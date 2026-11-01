@@ -10,7 +10,7 @@ const contentTypes = [
 const tones = ['ink', 'blue', 'cream', 'violet', 'yellow', 'mint', 'orange', 'black', 'photo'].map((value) => ({ value, label: value }))
 const sizes = [['standard', '标准 1×1'], ['wide', '宽 2×1'], ['tall', '高 1×2'], ['hero', '主角 2×2'], ['full', '全宽 4×1']].map(([value, label]) => ({ value, label }))
 const icons = ['user', 'folder', 'graduation', 'sparkles', 'image', 'heart', 'share', 'compass', 'mail'].map((value) => ({ value, label: value }))
-const interactions = [{ value: 'modal', label: '打开弹窗' }, { value: 'expand', label: '原位展开' }, { value: 'link', label: '直接打开链接' }]
+const interactions = [{ value: 'modal', label: '打开弹窗' }, { value: 'expand', label: '原位展开' }]
 
 export function CardBuilder({ draft, errors, updateField, replaceDraft, repository }) {
   return (
@@ -25,12 +25,11 @@ export function CardBuilder({ draft, errors, updateField, replaceDraft, reposito
               <div className="admin-field-row"><Field label="眉题" path={`cards.${index}.eyebrow`} value={card.eyebrow} onChange={updateField} /><Field label="标题" path={`cards.${index}.title`} value={card.title} onChange={updateField} error={errors[`cards.${index}.title`]} required /></div>
               <TextAreaField label="卡片摘要" path={`cards.${index}.summary`} value={card.summary} onChange={updateField} error={errors[`cards.${index}.summary`]} required rows={3} />
               <div className="admin-field-grid-3"><SelectField label="尺寸" path={`cards.${index}.size`} value={card.size} onChange={updateField} options={sizes} /><SelectField label="色调" path={`cards.${index}.tone`} value={card.tone} onChange={updateField} options={tones} /><SelectField label="图标" path={`cards.${index}.icon`} value={card.icon} onChange={updateField} options={icons} /></div>
-              <SelectField label="点击交互" path={`cards.${index}.interaction`} value={card.interaction} onChange={updateField} options={interactions} helper="弹窗显示详情；原位展开显示清单；直接打开链接前往指定网址。" />
-              {card.interaction === 'link' && <Field label="目标网址" type="url" path={`cards.${index}.linkUrl`} value={card.linkUrl || ''} onChange={updateField} error={errors[`cards.${index}.linkUrl`]} helper="粘贴完整的 http:// 或 https:// 网址，点击卡片会在新标签页直接打开。" required />}
+              <SelectField label="点击交互" path={`cards.${index}.interaction`} value={card.interaction} onChange={updateField} options={interactions} helper="弹窗适合长内容；原位展开适合清单和短内容。" />
               <UploadField label="上传卡片封面" path={`cards.${index}.image`} value={card.image} updateField={updateField} repository={repository} alt="" />
               <Field label="封面网址（可选）" type="url" path={`cards.${index}.image`} value={card.image || ''} onChange={updateField} />
               {card.image && <><button type="button" className="admin-add-compact" onClick={() => updateField(`cards.${index}.image`, '')}>移除封面</button><div className="admin-field-row"><Field label={`水平焦点 ${card.focusX ?? 50}%`} type="range" min="0" max="100" path={`cards.${index}.focusX`} value={card.focusX ?? 50} onChange={updateField} /><Field label={`垂直焦点 ${card.focusY ?? 50}%`} type="range" min="0" max="100" path={`cards.${index}.focusY`} value={card.focusY ?? 50} onChange={updateField} /></div></>}
-              {card.contentType === 'custom' && card.interaction !== 'link' && <section className="admin-custom-content"><h3>自定义详情</h3>
+              {card.contentType === 'custom' && <section className="admin-custom-content"><h3>自定义详情</h3>
                 <CollectionEditor title="正文" description="每格显示为一个段落，可以换行。" path={`cards.${index}.customContent.paragraphs`} items={card.customContent.paragraphs} draft={draft} replaceDraft={replaceDraft} create={() => ''} addLabel="添加文字格">
                   {(paragraph, paragraphIndex) => <TextAreaField label={`文字格 ${paragraphIndex + 1}`} path={`cards.${index}.customContent.paragraphs.${paragraphIndex}`} value={paragraph} onChange={updateField} rows={2} autoResize />}
                 </CollectionEditor>
