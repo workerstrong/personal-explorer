@@ -11,7 +11,7 @@ function cardFromHash(cards) {
   } catch {
     return null
   }
-  return cards.some((card) => card.id === id && card.interaction !== 'expand') ? id : null
+  return cards.some((card) => card.id === id && card.interaction !== 'expand' && card.interaction !== 'link') ? id : null
 }
 
 export function PublicSite({ profileData, embedded = false }) {
@@ -57,7 +57,7 @@ export function PublicSite({ profileData, embedded = false }) {
     else window.location.hash = encodeURIComponent(card.id)
   }
 
-  const selectedCard = profileData.cards.find((card) => card.id === activeCard)
+  const selectedCard = profileData.cards.find((card) => card.id === activeCard && card.interaction !== 'link')
 
   return (
     <div className={`site-shell ${embedded ? 'site-shell--embedded' : ''}`}>

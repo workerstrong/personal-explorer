@@ -108,6 +108,18 @@ export function normalizeProfileContent(value) {
   return structuredClone(normalized)
 }
 
+export function getCardLink(card) {
+  if (typeof card.linkUrl !== 'string') return ''
+  const value = card.linkUrl.trim()
+  if (!/^https?:\/\//i.test(value)) return ''
+  try {
+    const url = new URL(value)
+    return ['http:', 'https:'].includes(url.protocol) ? value : ''
+  } catch {
+    return ''
+  }
+}
+
 export function validateProfileContent(content) {
   const errors = {}
   const warnings = []
@@ -134,6 +146,7 @@ export function validateProfileContent(content) {
     seenIds.add(card.id)
     if (!card.title?.trim()) errors[`cards.${index}.title`] = `第 ${index + 1} 张卡片缺少标题。`
     if (!card.summary?.trim()) errors[`cards.${index}.summary`] = `第 ${index + 1} 张卡片缺少简介。`
+    if (card.interaction === 'link' && !getCardLink(card)) errors[`cards.${index}.linkUrl`] = `第 ${index + 1} 张卡片需要完整的 http:// 或 https:// 网址。`
   })
 
   content.gallery?.forEach((image, index) => {

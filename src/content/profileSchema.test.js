@@ -39,4 +39,30 @@ describe('profile content schema', () => {
     expect(result.errors.name).toBeTruthy()
     expect(result.errors['cards.0.title']).toBeTruthy()
   })
+
+  it.each(['https://example.com/goals', 'http://example.com/goals', ' https://example.com/goals '])('accepts a complete web URL for a link card: %s', (linkUrl) => {
+    const content = createInitialContent()
+    content.cards[0] = { ...content.cards[0], interaction: 'link', linkUrl }
+    const reloaded = normalizeProfileContent(JSON.parse(JSON.stringify(content)))
+
+    expect(reloaded.cards[0]).toMatchObject({ interaction: 'link', linkUrl })
+    expect(validateProfileContent(reloaded).errors['cards.0.linkUrl']).toBeUndefined()
+    expect(validateProfileContent(reloaded).isValid).toBe(true)
+  })
+
+  it.each([undefined, '', '   ', 'https://', 'https:example.com', 'https:/example.com', 'example.com', '/goals', '//example.com', 'javascript:alert(1)', 'data:text/html,test', 'mailto:hello@example.com'])('requires a safe absolute web URL for a link card: %s', (linkUrl) => {
+    const content = createInitialContent()
+    content.cards[0] = { ...content.cards[0], interaction: 'link', linkUrl }
+    const validation = validateProfileContent(content)
+
+    expect(validation.errors['cards.0.linkUrl']).toBeTruthy()
+    expect(validation.isValid).toBe(false)
+  })
+
+  it('does not require a card URL for existing modal or expanded cards', () => {
+    const content = createInitialContent()
+    expect(content.cards.some((card) => card.interaction === 'expand')).toBe(true)
+    expect(content.cards.some((card) => card.interaction === 'modal')).toBe(true)
+    expect(validateProfileContent(content).isValid).toBe(true)
+  })
 })

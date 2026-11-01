@@ -59,6 +59,31 @@ describe('content workspace', () => {
     expect(coverUrls[0]).toHaveValue('')
   })
 
+  it('sets a card to open a pasted URL and preserves the setting after autosave and reload', async () => {
+    const content = createInitialContent()
+    content.cards = [content.cards.find((card) => card.id === 'goals')]
+    localStorage.setItem('personal-explorer-cms-draft-v1', JSON.stringify({ content, revision: 1 }))
+    const user = userEvent.setup()
+    const view = render(<App />)
+    await user.click(await screen.findByRole('button', { name: /进入本地演示/ }))
+    await user.click(await screen.findByRole('button', { name: '页面构建器' }))
+
+    await user.selectOptions(await screen.findByLabelText('点击交互'), 'link')
+    expect(screen.getByRole('option', { name: '直接打开链接' }).selected).toBe(true)
+    await user.type(screen.getByLabelText(/目标网址/), 'https://example.com/goals')
+    expect(screen.getByRole('link', { name: /Future goals/ })).toHaveAttribute('href', 'https://example.com/goals')
+    await waitFor(() => {
+      const saved = JSON.parse(localStorage.getItem('personal-explorer-cms-draft-v1'))
+      expect(saved.content.cards[0]).toMatchObject({ interaction: 'link', linkUrl: 'https://example.com/goals' })
+    }, { timeout: 2500 })
+
+    view.unmount()
+    await enterDemo(user)
+    await user.click(await screen.findByRole('button', { name: '页面构建器' }))
+    expect(await screen.findByLabelText('点击交互')).toHaveValue('link')
+    expect(screen.getByLabelText(/目标网址/)).toHaveValue('https://example.com/goals')
+  })
+
   it('adds, edits, saves and deletes custom text boxes while keeping legacy content', async () => {
     const content = createInitialContent()
     content.cards.push({ id: 'custom-text', title: '旧卡片', summary: '简介', contentType: 'custom', customContent: { body: '长路迢迢路漫漫', links: [] } })

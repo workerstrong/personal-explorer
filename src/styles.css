@@ -211,6 +211,7 @@ a:focus-visible {
   background: transparent;
   color: inherit;
   text-align: left;
+  text-decoration: none;
 }
 .card-topline { display: flex; align-items: center; justify-content: space-between; }
 .card-icon { display: grid; place-items: center; width: 48px; height: 48px; border: 2px solid currentColor; border-radius: 50%; }
