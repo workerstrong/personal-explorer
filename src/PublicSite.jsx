@@ -5,16 +5,17 @@ import { ProfileContent } from './components/ProfileContent'
 import { ProfileModal } from './components/ProfileModal'
 
 function cardFromHash(cards) {
-  const id = window.location.hash.replace('#', '')
+  let id
+  try {
+    id = decodeURIComponent(window.location.hash.slice(1))
+  } catch {
+    return null
+  }
   return cards.some((card) => card.id === id && card.interaction !== 'expand') ? id : null
 }
 
 export function PublicSite({ profileData, embedded = false }) {
   const visibleCards = useMemo(() => profileData.cards.filter((card) => card.visible !== false), [profileData.cards])
-  const modalCardIds = useMemo(
-    () => new Set(visibleCards.filter((card) => card.interaction !== 'expand').map((card) => card.id)),
-    [visibleCards],
-  )
   const [activeCard, setActiveCard] = useState(() => embedded ? null : cardFromHash(visibleCards))
   const [expandedCard, setExpandedCard] = useState(null)
   const [theme, setTheme] = useState(() => embedded ? 'light' : (localStorage.getItem('profile-theme') || 'light'))
@@ -22,13 +23,11 @@ export function PublicSite({ profileData, embedded = false }) {
 
   useEffect(() => {
     if (embedded) return undefined
-    const syncHash = () => {
-      const id = window.location.hash.replace('#', '')
-      setActiveCard(modalCardIds.has(id) ? id : null)
-    }
+    const syncHash = () => setActiveCard(cardFromHash(visibleCards))
+    syncHash()
     window.addEventListener('hashchange', syncHash)
     return () => window.removeEventListener('hashchange', syncHash)
-  }, [embedded, modalCardIds])
+  }, [embedded, visibleCards])
 
   useEffect(() => {
     if (embedded) return
@@ -55,7 +54,7 @@ export function PublicSite({ profileData, embedded = false }) {
     }
     returnFocusRef.current = event.currentTarget
     if (embedded) setActiveCard(card.id)
-    else window.location.hash = card.id
+    else window.location.hash = encodeURIComponent(card.id)
   }
 
   const selectedCard = profileData.cards.find((card) => card.id === activeCard)
